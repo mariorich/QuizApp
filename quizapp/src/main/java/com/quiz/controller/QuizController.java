@@ -46,5 +46,34 @@ public class QuizController {
         return "redirect:/home";
     }
 
+    @GetMapping("/editQuiz")
+    public String showEditQuizPage(@RequestParam Long questionId) {
+        Question question = questionService.getQuizById(questionId);
+        model.addAttribute("question", question);
+        return "editQuiz";
+    }
+    @PostMapping("/editQuiz")
+    public String editQuiz(@RequestParam Long questionId, @RequestParam String questionText, @RequestParam String optionA,
+                           @RequestParam String optionB, @RequestParam String optionC, @RequestParam String optionD,
+                           @RequestParam String correctAnswer) {
+        ArrayList<String> options = new ArrayList<>(Arrays.asList(optionA, optionB, optionC, optionD));
+        Question question = new Question(questionId, questionText, options, correctAnswer);
+        questionService.updateQuiz(question);
+        return "redirect:/home";
+        }
 
+
+    @GetMapping("/home")
+    public String showHomePage(Model model) {
+        List<Question> questions = questionService.loadQuizzes();
+        model.addAttribute("questions", questions);
+        return "home";
+    }
+    @PostMapping("/home")
+    public String submitQuiz(Model model, @RequestParam HashMap<Long, String> userAnswers) {
+        questionService.calculateScore(userAnswers);
+        Long score = questionService.getScore();
+        model.addAttribute("score", score);
+        return "quizResult";
+    }
 }
