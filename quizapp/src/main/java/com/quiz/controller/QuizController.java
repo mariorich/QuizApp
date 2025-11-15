@@ -64,11 +64,29 @@ public class QuizController {
 
 
     @GetMapping("/home")
-    public String showHomePage(Model model) {
+    public String showHomePage(Model model,@RequestParam User user) {
+        
+        if(user.getRole().equals("ADMIN")) {
+            return "reditrect:/admin/home";
+        }
+        return "redirect:/user/home";
+    }
+    @GetMapping("/admin/home")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String showAdminHomePage(Model model) {
         List<Question> questions = questionService.loadQuizzes();
         model.addAttribute("questions", questions);
-        return "home";
+        return "adminHome";
     }
+
+    @GetMapping("/user/home")
+    @PreAuthorize("hasRole('USER')")
+    public String showUserHomePage(Model model) {
+        List<Question> questions = questionService.loadQuizzes();
+        model.addAttribute("questions", questions);
+        return "userHome";
+    }
+
     @PostMapping("/home")
     public String submitQuiz(Model model, @RequestParam HashMap<Long, String> userAnswers) {
         questionService.calculateScore(userAnswers);

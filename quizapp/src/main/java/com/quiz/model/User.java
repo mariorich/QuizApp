@@ -1,5 +1,6 @@
 package com.quiz.model;
 
+@Entity
 public class User {
     private String username;
     private String email;

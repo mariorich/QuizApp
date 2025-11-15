@@ -1,6 +1,8 @@
 package com.quiz.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.quiz.model.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +11,13 @@ import java.util.List;
 public class QuizUserDetailService {
     private List<User> users = new ArrayList<>();
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     public void registerUser(String username, String password, String email, String role) {
-        User user = new User(username, password, email, role);
+        
+        encodedPassword = passwordEncoder.encode(password);
+        
+        User user = new User(username, encodedPassword, email, role);
         users.add(user);
     }
 
