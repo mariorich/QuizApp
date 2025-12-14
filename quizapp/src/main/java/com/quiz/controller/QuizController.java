@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.quiz.service.QuizUserDetailService;
 import com.quiz.model.User;
-import java.util.List;
 import com.quiz.service.QuestionService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ public class QuizController {
         return "login";
     }
 
-    @GetMapping("/public/register")
+    @GetMapping("/register")
     public String registerPage() {
         return "register";
     }
@@ -53,18 +52,21 @@ public class QuizController {
         return "redirect:/user/home";
     }
 
+    // Inject QuestionService
+    @Autowired
+    private QuestionService questionService;
+
     @GetMapping("/admin/home")
-    public String adminHome() {
+    public String adminHome(Model model) {
+        model.addAttribute("quizzes", questionService.loadQuizzes());
         return "adminHome"; // Your admin page template
     }
 
     @GetMapping("/user/home")
-    public String userHome() {
+    public String userHome(Model model) {
+        model.addAttribute("quizzes", questionService.loadQuizzes());
         return "userHome"; // Your user page template
     }
-    // Inject QuestionService
-    @Autowired
-    private QuestionService questionService;
 
     // Admin adds quiz
     @PostMapping("/admin/addQuiz")

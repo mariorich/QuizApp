@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Home</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="container">
+        <h2>Admin Home</h2>
+
+        <div>
+            <h3>Available Quizzes</h3>
+            <ul>
+                <li th:each="quiz : ${quizzes}">
+                    <strong th:text="${quiz.questionText}">Question text</strong>
+                    <ul>
+                        <li th:each="opt : ${quiz.options}" th:text="${opt}">Option</li>
+                    </ul>
+                    <p>Correct Answer: <span th:text="${quiz.correctAnswer}">Answer</span></p>
+                </li>
+                <li th:if="${quizzes.size() == 0}">
+                    No quizzes added yet.
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <button onclick="location.href='/admin/addQuiz'">Add New Quiz</button>
+        </div>
+
+        <div>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
