@@ -1,67 +1,32 @@
 package com.quiz.service;
 
-import com.quiz.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.quiz.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class QuizUserDetailService implements UserDetailsService {
+public class QuizUserDetailService {
 
-    // In-memory storage for users
-    private final List<User> userList = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /**
-     * Register a new user (in-memory)
-     * @param username username
-     * @param password raw password (will be encoded)
-     * @param email user email
-     * @param role role (e.g., "USER" or "ADMIN")
-     */
+    // Register a new user
     public void registerUser(String username, String password, String email, String role) {
-        // Encode password
         String encodedPassword = passwordEncoder.encode(password);
-
-        // Store in custom User list
-        User newUser = new User(username, email, encodedPassword, role);
-        userList.add(newUser);
+        users.add(new User(username, encodedPassword, email, "ROLE_" + role.toUpperCase()));
     }
 
-    /**
-     * Load user by username for authentication
-     * @param username username
-     * @return Spring Security UserDetails
-     * @throws UsernameNotFoundException if user not found
-     */
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Find user in the in-memory list
-        User u = userList.stream()
-                .filter(user -> user.getUsername().equals(username))
+    // Load user by username
+    public User loadUserByUsername(String username) {
+        return users.stream()
+                .filter(u -> u.getUsername().equals(username))
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        // Convert to Spring Security User for authentication
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(u.getUsername())
-                .password(u.getPassword())
-                .roles(u.getRole()) // Spring Security roles
-                .build();
-    }
-
-    /**
-     * Optional: get all users (for debugging or listing)
-     */
-    public List<User> getAllUsers() {
-        return new ArrayList<>(userList);
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
+

@@ -6,6 +6,26 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-    <div>"LOGIN PAGE"</div>
+    <h1>Login</h1>
+    <form th:action="@{/login}" method="post">
+        <div>
+            <label>Username:</label>
+            <input type="text" name="username" placeholder="Enter username" required>
+        </div>
+        <div>
+            <label>Password:</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a th:href="@{/public/register}">Register here</a></p>
+
+    <!-- Optional: show login error -->
+    <div th:if="${param.error}">
+        Invalid username or password.
+    </div>
+    <div th:if="${param.logout}">
+        You have been logged out.
+    </div>
 </body>
 </html>
