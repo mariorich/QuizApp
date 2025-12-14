@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <h1>Login</h1>
+    <div>
+        <form th:action="@{/admin/addQuiz}" method="post">
+        <div>
+            <label>Question text:</label>
+            <input type="text" name="questionText" placeholder="" required>
+        </div>
+        <div>
+            <label>Option A:</label>
+            <input type="text" name="optionA" placeholder="Option A" required>
+        </div>
+        <div>
+            <label>Option B:</label>
+            <input type="text" name="optionB" placeholder="Option B" required>
+        </div>
+        <div>
+            <label>Option C:</label>
+            <input type="text" name="optionC" placeholder="Option C" required>
+        </div>
+        <div>
+            <label>Option D:</label>
+            <input type="text" name="optionD" placeholder="Option D" required>
+        </div>
+        <div>
+            <label>Correct Answer</label>
+            <select name="correctAnswer" required>
+                <option value="">Select Option</option>
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+            </select>
+        </div>
+        <button type="submit">Add Question</button>
+    </form>
+    </div>
+</body>
+</html>

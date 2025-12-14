@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 
 import com.quiz.service.QuizUserDetailsService;
 import com.quiz.service.QuestionService;
@@ -21,10 +21,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 @Controller
-@RequestMapping("/")
 public class QuizController {
 
-    @Autowired
     private final QuizUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     
@@ -91,6 +89,7 @@ public class QuizController {
         // Redirect to the /login endpoint
         return "redirect:/login?success";
     }
+
     // Inject QuestionService
     @Autowired
     private QuestionService questionService;
@@ -108,7 +107,7 @@ public class QuizController {
     }
 
     // Admin adds quiz
-    @GetMapping("/user/addQuiz")
+    @GetMapping("/admin/addQuiz")
     public String addQuizPage(Model model) {
         return "addQuiz"; // AddQuiz template
     }

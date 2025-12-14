@@ -23,7 +23,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/register", "/login").permitAll() // Allow access to registration and login pages
+                .requestMatchers("/register", "/login","/css/***").permitAll() // Allow access to registration and login pages
                 .requestMatchers("/admin/**").hasRole("ADMIN") // Restrict /admin to users with the ADMIN role
                 .anyRequest().authenticated() // Require authentication for all other endpoints
             )
