@@ -7,13 +7,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.quiz.service.QuizUserDetailsService;
-import com.quiz.model.User;
 import com.quiz.service.QuestionService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 @RequestMapping("/")
 public class QuizController {
 
+    @Autowired
     private final QuizUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     
@@ -51,28 +53,14 @@ public class QuizController {
             .orElse("ROLE_STAFF"); // Default role if no authority is found
         // Redirect to the appropriate page based on the role
         if (role.equals("ROLE_ADMIN")) {
-            return "admin"; // Return the admin.html template
+            return "redirect:/admin/quizList"; // Return the admin.html template
         } else {
-            return "viewer"; // Return the viewer.html template
+            return "user/quiz"; // Return the viewer.html template
         }
     }
 
-
-
-
-
-    @Autowired
-    private QuizUserDetailService quizUserDetailService;
-
-    @GetMapping("/public/login")
+    @GetMapping("/login")
     public String loginPage() {
-        return "login";
-    }
-
-    @PostMapping("/public/login")
-    public String login(Model model,
-                        @RequestParam String username,
-                        @RequestParam String password) {
         return "login";
     }
 
@@ -82,29 +70,27 @@ public class QuizController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestParam String username,
-                               @RequestParam String password,
-                               @RequestParam String email,
-                               @RequestParam String role) {
-        quizUserDetailService.registerUser(username, password, email, role);
-        return "redirect:/public/login";
-    }
-
-    @GetMapping("/home")
-    public String homeRedirect() {
-        // Get logged-in username
-        String username = org.springframework.security.core.context.SecurityContextHolder
-                            .getContext()
-                            .getAuthentication()
-                            .getName();
-        User user = quizUserDetailService.loadUserByUsername(username);
-
-        if(user.getRole().equals("ROLE_ADMIN")) {
-            return "redirect:admin/quizList";
+    public String registerUser(
+            @RequestParam String username, // Username from the form
+            @RequestParam String password, // Password from the form
+            @RequestParam String role // Role from the form
+    ) {
+        // Register the user by storing their details in the HashMap
+        try {
+            userDetailsService.registerUser(username, password, role);
+        } catch (Exception userExistsAlready) {
+            // Redirect to the /register endpoint
+            return "redirect:/register?error";
         }
-        return "redirect:/user/quiz";
+        // Authenticate the user programmatically
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(username, password)
+        );
+        // Set the authentication in the SecurityContext
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // Redirect to the /login endpoint
+        return "redirect:/login?success";
     }
-
     // Inject QuestionService
     @Autowired
     private QuestionService questionService;

@@ -12,7 +12,7 @@ import java.util.Map;
 
 
 @Service
-public class QuizUserDetailService implements UserDetailsService {
+public class QuizUserDetailsService implements UserDetailsService {
     private final Map<String, User> users = new HashMap<>();
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
