@@ -5,20 +5,31 @@ import org.springframework.web.bind.annotation.*;
 import com.quiz.model.Question;
 import com.quiz.service.QuestionService;
 import com.quiz.service.QuizUserDetailService;
-
+import com.quiz.model.User;
+import org.springframework.ui.Model;
+import org.springframework.security.access.prepost.PreAuthorize;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;  
+import org.springframework.beans.factory.annotation.Autowired;
+
+
 
 @Controller
 @RequestMapping("/")
 public class QuizController {
 
-    @GetMapping("/login")
+    @Autowired
+    private QuestionService questionService;
+    @Autowired
+    private QuizUserDetailService quizUserDetailService;
+
+    @GetMapping("/public/login")
     public String showLoginPage() {
         return "login";
     }
-    @GetMapping("/register")
+    @GetMapping("/public/register")
     public String showRegistrationPage() {
         return "register";
     }
@@ -31,34 +42,33 @@ public class QuizController {
         return "redirect:/login";
     }
 
-    @GetMapping("/addQuiz")
+    @GetMapping("/admin/addQuiz")
     public String showAddQuizPage() {
         return "addQuiz";
     }
-    @PostMapping("/addQuiz")
+    @PostMapping("/admin/addQuiz")
     public String addQuiz(@RequestParam String questionText, @RequestParam String optionA,
                           @RequestParam String optionB, @RequestParam String optionC, @RequestParam String optionD,
                           @RequestParam String correctAnswer) {
     
         ArrayList<String> options = new ArrayList<>(Arrays.asList(optionA, optionB, optionC, optionD));
-        Question question = new Question(questionText, options, correctAnswer);
-        questionService.addQuiz(question);
+        questionService.addQuiz(questionText, options, correctAnswer);
         return "redirect:/home";
     }
 
-    @GetMapping("/editQuiz")
-    public String showEditQuizPage(@RequestParam Long questionId) {
+    @GetMapping("/admin/editQuiz")
+    public String showEditQuizPage(Model model, @RequestParam int questionId) {
         Question question = questionService.getQuizById(questionId);
         model.addAttribute("question", question);
         return "editQuiz";
     }
-    @PostMapping("/editQuiz")
-    public String editQuiz(@RequestParam Long questionId, @RequestParam String questionText, @RequestParam String optionA,
+    @PostMapping("/admin/editQuiz")
+    public String editQuiz(@RequestParam int questionId, @RequestParam String questionText, @RequestParam String optionA,
                            @RequestParam String optionB, @RequestParam String optionC, @RequestParam String optionD,
                            @RequestParam String correctAnswer) {
         ArrayList<String> options = new ArrayList<>(Arrays.asList(optionA, optionB, optionC, optionD));
         Question question = new Question(questionId, questionText, options, correctAnswer);
-        questionService.updateQuiz(question);
+        questionService.editQuiz(question);
         return "redirect:/home";
         }
 

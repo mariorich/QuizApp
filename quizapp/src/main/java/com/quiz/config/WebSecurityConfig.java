@@ -1,29 +1,35 @@
 package com.quiz.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
- @Override
- protected void configure(AuthenticationManagerBuilder auth) throws Exception {
- auth.inMemoryAuthentication()
- .withUser("user").password("{noop}password").roles("USER")
- .and()
- .withUser("admin").password("{noop}adminpass").roles("ADMIN");
- }
- @Override
- protected void configure(HttpSecurity http) throws Exception {
- http
- .authorizeRequests()
- .antMatchers("/admin/").hasRole("ADMIN")
- .antMatchers("/user/").hasRole("USER")
- .antMatchers("/public/**").permitAll()
- .and()
- .formLogin();
- }
+public class WebSecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable()) // optional: disable CSRF for testing
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/public/**", "/login", "/register").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/home")
+                .permitAll()
+            )
+            .logout(logout -> logout.permitAll());
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

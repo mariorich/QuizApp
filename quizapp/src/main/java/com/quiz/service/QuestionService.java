@@ -1,11 +1,11 @@
 package com.quiz.service;
 
 import com.quiz.model.Question;
-
+import java.util.ArrayList;
+import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
 
 @Service
 public class QuestionService {
@@ -13,8 +13,15 @@ public class QuestionService {
 private List<Question> questions = new ArrayList<Question>();
 private Long score;
 
-    public void addQuiz(Question question) {
-        questions.add(question);
+    public void addQuiz(String questionText, ArrayList options, String correctAnswer) {
+        if(!questions.isEmpty()){
+            int newId = questions.get(questions.size() - 1).getId() + 1;
+            Question question = new Question(newId, questionText, options, correctAnswer);
+            questions.add(question);
+        } else {
+            Question question = new Question(1, questionText, options, correctAnswer);
+            questions.add(question);
+        }
     }
 
     public List<Question> loadQuizzes() {
@@ -35,7 +42,7 @@ private Long score;
         questions.removeIf(question -> question.getId() == questionId);
     }
     
-    public Question getQuizById(Long questionId) {
+    public Question getQuizById(int questionId) {
         for (Question question : questions) {
             if (question.getId() == questionId) {
                 return question;
@@ -50,8 +57,7 @@ private Long score;
     public void calculateScore(HashMap<Long,String> userAnswers) {
         Long calculatedScore = 0L;
         for (Question question : questions) {
-            questionID = question.getId();
-            String userAnswer = userAnswers.get(questionID);
+            String userAnswer = userAnswers.get(question.getId());
             if (question.getCorrectAnswer().equals(userAnswer)) {
                 calculatedScore++;
             }
