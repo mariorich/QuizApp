@@ -18,6 +18,9 @@
                         <li th:each="opt : ${quiz.options}" th:text="${opt}">Option</li>
                     </ul>
                     <p>Correct Answer: <span th:text="${quiz.correctAnswer}">Answer</span></p>
+                    <a th:href="@{/admin/editQuiz(questionId=${quiz.id})}">
+                        <button type="button">Edit</button>
+                    </a>
                 </li>
                 <li th:if="${quizzes.size() == 0}">
                     No quizzes added yet.

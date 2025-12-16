@@ -12,9 +12,7 @@ public class QuestionService {
     private List<Question> questions = new ArrayList<>();
 
     // Add a new quiz
-    public void addQuiz(String questionText, ArrayList<String> options, String correctAnswer) {
-        int newId = questions.isEmpty() ? 1 : questions.get(questions.size() - 1).getId() + 1;
-        Question question = new Question(newId, questionText, options, correctAnswer);
+    public void addQuiz(Question question) {
         questions.add(question);
     }
 

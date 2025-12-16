@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 
 import com.quiz.service.QuizUserDetailsService;
@@ -36,8 +37,12 @@ public class QuizController {
         this.authenticationManager = authenticationManager;
     }
 
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/home";
+    }
+
     @GetMapping("/home")
-    
     public String homepage(Model model) {
         // Get the authenticated user's details
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -63,13 +68,22 @@ public class QuizController {
     }
 
     @GetMapping("/login")
-    public String loginPage() {
-        return "login";
+    public String login(Authentication authentication, @RequestParam(required = false) String logout) {
+    // If user is logged in and not logging out, redirect to /home
+    // need to add the logout parameter check because the spring security automatically sends to the login page
+
+    if (authentication != null && authentication.isAuthenticated() && logout == null) {
+        return "redirect:/home";
+    }
+    return "login"; // show login page
     }
 
     @GetMapping("/register")
-    public String registerPage() {
-        return "register";
+    public String registerPage(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/home";
+        }
+        return "register"; // return register.html
     }
 
     @PostMapping("/register")
@@ -124,11 +138,38 @@ public class QuizController {
                         @RequestParam String optionC,
                         @RequestParam String optionD,
                         @RequestParam String correctAnswer) {
-
+        
+        List<Question> questions = questionService.loadQuizzes();
+        int newId = questions.isEmpty() ? 1 : questions.get(questions.size() - 1).getId() + 1;
         ArrayList<String> options = new ArrayList<>(Arrays.asList(optionA, optionB, optionC, optionD));
-        questionService.addQuiz(questionText, options, correctAnswer);
+        Question question = new Question(newId, questionText, options, correctAnswer);
+        questionService.addQuiz(question);
         return "redirect:/admin/quizList";
     }
+
+    @GetMapping("/admin/editQuiz")
+    public String addEditPage(@RequestParam int questionId, Model model) {
+        Question question = questionService.getQuizById(questionId);
+        model.addAttribute("question", question);
+        return "editQuiz"; // AddQuiz template
+    }
+
+    @PostMapping("/admin/editQuiz")
+    public String editQuiz(@RequestParam int questionId,
+                        @RequestParam String questionText,
+                        @RequestParam String optionA,
+                        @RequestParam String optionB,
+                        @RequestParam String optionC,
+                        @RequestParam String optionD,
+                        @RequestParam String correctAnswer) {
+
+        ArrayList<String> options = new ArrayList<>(Arrays.asList(optionA, optionB, optionC, optionD));
+        Question updatedQuestion = new Question(questionId, questionText, options, correctAnswer);
+        questionService.editQuiz(updatedQuestion);
+        return "redirect:/admin/quizList";
+    }
+
+
 
     // User submits answers
     @PostMapping("/user/submitQuiz")

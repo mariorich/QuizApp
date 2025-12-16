@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <h1>Login</h1>
+    <div>
+        <form th:action="@{/admin/editQuiz}" method="post">
+            <input type="hidden" name="questionId" th:value="${question.id}">
+            <div>
+                <label>Question text:</label>
+                <input type="text" name="questionText" th:value="${question.questionText}" required>
+            </div>
+            <div>
+                <label>Option A:</label>
+                <input type="text" name="optionA" th:value="${question.options[0]}" required>
+            </div>
+            <div>
+                <label>Option B:</label>
+                <input type="text" name="optionB" th:value="${question.options[1]}" required>
+            </div>
+            <div>
+                <label>Option C:</label>
+                <input type="text" name="optionC" th:value="${question.options[2]}" required>
+            </div>
+            <div>
+                <label>Option D:</label>
+                <input type="text" name="optionD" th:value="${question.options[3]}" required>
+            </div>
+            <div>
+                <label>Correct Answer</label>
+                <select name="correctAnswer" required>
+                    <option value="">Select Option</option>
+                    <option value="A" th:selected="${question.correctAnswer == 'A'}">Option A</option>
+                    <option value="B" th:selected="${question.correctAnswer == 'B'}">Option B</option>
+                    <option value="C" th:selected="${question.correctAnswer == 'C'}">Option C</option>
+                    <option value="D" th:selected="${question.correctAnswer == 'D'}">Option D</option>
+                </select>
+            </div>
+            <button type="submit">Update Question</button>
+        </form>
+    </div>
+</body>
+</html>
