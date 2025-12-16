@@ -15,10 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 import com.quiz.service.QuizUserDetailsService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import com.quiz.model.Question;
 import com.quiz.service.QuestionService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class QuizController {
@@ -53,7 +58,7 @@ public class QuizController {
         if (role.equals("ROLE_ADMIN")) {
             return "redirect:/admin/quizList"; // Return the admin.html template
         } else {
-            return "user/quiz"; // Return the viewer.html template
+            return "redirect:user/quiz"; // Return the viewer.html template
         }
     }
 
@@ -126,10 +131,22 @@ public class QuizController {
     }
 
     // User submits answers
-    @PostMapping("/submitQuiz")
-    public String submitQuiz(@RequestParam HashMap<Long, String> userAnswers, Model model) {
-        questionService.calculateScore(userAnswers);
-        model.addAttribute("score", questionService.getScore());
-        return "quizResult"; // Create a Thymeleaf template to show the score
+    @PostMapping("/user/submitQuiz")
+    public String submitQuiz(HttpServletRequest request, Model model) {
+        
+        Map<Integer, String> userAnswers = new HashMap<>();
+        
+        int i = 0;
+        
+        for (Question q : questionService.loadQuizzes()) {
+            String answer = request.getParameter("answer" + i);
+            userAnswers.put(q.getId(), answer);
+            i++;
+        }
+
+        model.addAttribute("score", questionService.calculateScore(userAnswers));
+        return "quizResult";
     }
+
+
 }

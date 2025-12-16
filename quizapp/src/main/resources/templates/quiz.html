@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Quiz</h2>
+
+    <form th:action="@{/user/submitQuiz}" method="post">
+        <ul>
+            <li th:each="quiz, stat : ${quizzes}">
+                <strong th:text="${quiz.questionText}">Question</strong>
+
+                <ul>
+                    <li th:each="opt : ${quiz.options}">
+                        <span th:text="${opt}"></span>
+                    </li>
+                </ul>
+
+                <label>Answer</label>
+                <select th:name="${'answer' + stat.index}" required>
+                    <option value="">Your Answer</option>
+                    <option value="A">Option A</option>
+                    <option value="B">Option B</option>
+                    <option value="C">Option C</option>
+                    <option value="D">Option D</option>
+                </select>
+            </li>
+        </ul>
+
+        <button type="submit">Submit Quiz</button>
+    </form>
+
+    <p th:if="${quizzes.size() == 0}">
+        No quizzes added yet.
+    </p>
+
+    <a th:href="@{/login?logout}">Logout</a>
+</div>
+</body>
+</html>

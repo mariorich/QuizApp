@@ -3,14 +3,13 @@ package com.quiz.service;
 import org.springframework.stereotype.Service;
 import com.quiz.model.Question;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 @Service
 public class QuestionService {
 
     private List<Question> questions = new ArrayList<>();
-    private Long lastScore = 0L;
 
     // Add a new quiz
     public void addQuiz(String questionText, ArrayList<String> options, String correctAnswer) {
@@ -43,18 +42,14 @@ public class QuestionService {
     }
 
     // Calculate score from submitted answers
-    public void calculateScore(HashMap<Long, String> userAnswers) {
-        long score = 0;
+    public int calculateScore(Map<Integer, String> userAnswers) {
+        int score = 0;
         for (Question q : questions) {
-            String answer = userAnswers.get((long) q.getId());
+            String answer = userAnswers.get(q.getId());
             if (answer != null && answer.equals(q.getCorrectAnswer())) {
                 score++;
             }
         }
-        lastScore = score;
-    }
-
-    public Long getScore() {
-        return lastScore;
+        return score;
     }
 }
