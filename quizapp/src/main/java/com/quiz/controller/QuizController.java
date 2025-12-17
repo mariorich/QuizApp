@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
@@ -154,21 +156,27 @@ public class QuizController {
         return "editQuiz"; // AddQuiz template
     }
 
-    @PostMapping("/admin/editQuiz")
-    public String editQuiz(@RequestParam int questionId,
-                        @RequestParam String questionText,
-                        @RequestParam String optionA,
-                        @RequestParam String optionB,
-                        @RequestParam String optionC,
-                        @RequestParam String optionD,
-                        @RequestParam String correctAnswer) {
+    @PutMapping("/admin/editQuiz")
+    public String editQuiz(
+            @RequestParam int questionId,
+            @RequestParam String questionText,
+            @RequestParam String optionA,
+            @RequestParam String optionB,
+            @RequestParam String optionC,
+            @RequestParam String optionD,
+            @RequestParam String correctAnswer) {
 
-        ArrayList<String> options = new ArrayList<>(Arrays.asList(optionA, optionB, optionC, optionD));
-        Question updatedQuestion = new Question(questionId, questionText, options, correctAnswer);
+        List<String> options = Arrays.asList(optionA, optionB, optionC, optionD);
+        Question updatedQuestion = new Question(questionId, questionText, new ArrayList<>(options), correctAnswer);
         questionService.editQuiz(updatedQuestion);
         return "redirect:/admin/quizList";
     }
 
+    @DeleteMapping("/admin/deleteQuiz")
+    public String deleteQuiz(@RequestParam int questionId) {
+        questionService.deleteQuiz(questionId);
+        return "redirect:/admin/quizList";
+    }
 
 
     // User submits answers

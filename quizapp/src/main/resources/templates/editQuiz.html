@@ -9,6 +9,7 @@
     <h1>Login</h1>
     <div>
         <form th:action="@{/admin/editQuiz}" method="post">
+            <input type="hidden" name="_method" value="put">
             <input type="hidden" name="questionId" th:value="${question.id}">
             <div>
                 <label>Question text:</label>

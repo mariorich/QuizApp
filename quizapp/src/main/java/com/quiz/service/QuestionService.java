@@ -34,6 +34,11 @@ public class QuestionService {
         }
     }
 
+    // Delete quiz
+    public void deleteQuiz(int id) {
+        questions.removeIf(q -> q.getId() == id);
+    }
+
     // Load all quizzes
     public List<Question> loadQuizzes() {
         return questions;
